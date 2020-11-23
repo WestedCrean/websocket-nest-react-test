@@ -13,8 +13,8 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Server } from 'ws'
 
-@WebSocketGateway({ namespace: 'streams', transports: ["websocket"] })
-export class StreamsGateway 
+@WebSocketGateway({transports: ["websocket"]})
+export class StreamsGateway
  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect { 
    @WebSocketServer() server: Server;
   private logger: Logger = new Logger('StreamsGateway'); 
@@ -36,9 +36,10 @@ export class StreamsGateway
   @SubscribeMessage('message')
   handleMessage(
     client: Socket,
-    text: string): WsResponse<string> {
+    text: string): void {
+      this.server.emit('message', text)
       console.log(`Message from client: ${text}`)
-      return { event: 'message', data: text}
+      //return { event: 'message', data: text}
   } 
   
   
